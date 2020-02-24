@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>疫情实时大数据报告</title>
+    <script src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+    <script>
+        ! function (win) {
+            var v, initial_scale, timeCode, dom = win.document,
+                domEle = dom.documentElement,
+                viewport = dom.querySelector('meta[name="viewport"]'),
+                flexible = dom.querySelector('meta[name="flexible"]');
+
+            function resize() {
+                var domWidth = domEle.getBoundingClientRect().width;
+                if (domWidth / v > 2560) {
+                    domWidth = 2560 * v;
+                }
+                win.rem = domWidth / 16;
+                if (win.rem > 40) {
+                    win.rem = 40;
+                }
+
+                domEle.style.fontSize = win.rem + "px";
+            }
+
+
+
+            if (viewport) {
+                var o = viewport.getAttribute("content").match(/initial\-scale=(["']?)([\d\.]+)\1?/);
+                if (o) {
+                    initial_scale = parseFloat(o[2]);
+                    v = parseInt(1 / initial_scale);
+                }
+            } else {
+                if (flexible) {
+                    var o = flexible.getAttribute("content").match(/initial\-dpr=(["']?)([\d\.]+)\1?/);
+                    if (o) {
+                        v = parseFloat(o[2]);
+                        initial_scale = parseFloat((1 / v).toFixed(2))
+                    }
+                }
+            }
+            if (!v && !initial_scale) {
+                var n = (win.navigator.appVersion.match(/android/gi), win.navigator.appVersion.match(/iphone/gi));
+                v = win.devicePixelRatio;
+                v = n ? v >= 3 ? 3 : v >= 2 ? 2 : 1 : 1, initial_scale = 1 / v
+            }
+            if (domEle.setAttribute("data-dpr", v), !viewport) {
+                if (viewport = dom.createElement("meta"), viewport.setAttribute("name", "viewport"), viewport.setAttribute("content", "initial-scale=" + initial_scale + ", maximum-scale=" + initial_scale + ", minimum-scale=" + initial_scale + ", user-scalable=no"), domEle.firstElementChild) {
+                    domEle.firstElementChild.appendChild(viewport)
+                } else {
+                    var m = dom.createElement("div");
+                    m.appendChild(viewport), dom.write(m.innerHTML)
+                }
+            }
+            win.dpr = v;
+            win.addEventListener("resize", function () {
+                clearTimeout(timeCode), timeCode = setTimeout(resize, 300)
+            }, false);
+            win.addEventListener("pageshow", function (b) {
+                b.persisted && (clearTimeout(timeCode), timeCode = setTimeout(resize, 300))
+            }, false);
+
+            resize();
+        }(window);
+    </script>
+    <style>
+        /* font-size:12px==font-size:0.48rem
+        font-size:14px==font-size:0.54rem
+        font-size:16px==font-size:0.6rem
+        font-size:18px==font-size:0.7rem
+        font-size:20px==font-size:0.78rem
+        font-size:22px==font-size:0.82rem
+        font-size:26px==font-size: 1rem; */
+
+        html{font-size:62.5%; margin:0; padding:0; width:100%; background:#fff; -webkit-text-size-adjust:none;}
+        body{width:100%; margin:0 auto !important; padding:0; background:#fff; -webkit-text-size-adjust:none;    max-width: 640px !important;color:#333333;}
+        body, h1, h2, h3, h4, h5, h6, hr, p,blockquote, dl, dt, dd, ul, ol, li, pre,strong, b, form, fieldset, legend, button, input, textarea, th, td, tr, button, input, select, textarea{font-family:Helvetica,Microsoft Yahei; font-size:0.6rem; margin:0; vertical-align:middle; -webkit-text-size-adjust:none; }
+        *{margin:0; padding:0; text-shadow:none;  -moz-box-sizing:border-box; -webkit-box-sizing:border-box; box-sizing:border-box; -webkit-text-size-adjust:none; }
+        h1, h2, h3, h4, h5, h6{font-size:100%;}
+        i, em{font-style:normal;}
+        ul, ol, li{list-style:none;}
+        a, button, input, textarea{text-decoration:none;  -webkit-tap-highlight-color:rgba(0,0,0,0); outline:none; -webkit-appearance: none; -moz-border-radius:0; -webkit-border-radius:0; -o-border-radius:0; -ms-border-radius:0; border-radius:0; }
+        a:active, button:active{text-decoration:none;  outline:none;}
+        a.anone, a.anone:active{filter:Alpha(Opacity=100); -webkit-opacity:1; -moz-opacity:1; -ms-opacity:1; -o-opacity:1; opacity:1;}
+        img{border:medium none; margin:0; padding:0; list-style-type:none; border:0; border:none; vertical-align:top;width:100%;display:block;}
+        .main { width: 93%; margin: 0 auto; }
+        .ovf { overflow: hidden; }
+        .tit { text-align: center; font-size: 0.75rem; font-weight: bold; padding-top: 0.6rem; }
+        .updata-time {color: #999; font-size: 0.55rem; }
+        .in-t { font-size: 0.7rem; font-weight: bold; line-height: 1.5rem; }
+        .indata { background: #f5f6f7; padding: 0.4rem 0 0; border-radius: 0.2rem; margin: 0.4rem 0; }
+        .indata li { float: left; width: 33.3%; text-align: center;margin-bottom: 0.4rem; }
+        .inlist-t{display: flex;margin-bottom: 0.2rem; padding: 0 0.2rem;}
+        .inlist-t div { font-size: 0.68rem; flex:1;font-weight: 500;text-align: center;}
+        .in-n { color: #10aeb5; font-size: 0.65rem; font-weight: bold; text-align: center; }
+        .dataSource { color: #b8b9bb; line-height: 1.5rem; font-size: 0.55rem; text-align: center; }
+        .inlist, .inlist-o, .inlist-x { table-layout: fixed; width: 100%; margin-top: .5rem; padding-bottom: .5rem; text-align: center; border-spacing: 2px 6px; font-size: .938rem; color: #4d5054; }
+        .show { display: none; position: fixed; top: 0; padding-top: 10vh; z-index: 100; width: 100%; height: 100vh; background: rgba(1, 1, 1, 0.2); }
+        .box { width: 93%; margin: 0 auto; height: 80vh; border-radius: 0.4rem; overflow: auto; background: #fff; }
+        .area { background: #f5f6f7;height: 1.5rem; line-height: 1.5rem; }
+        .list-i{ background: #f5f6f7; margin: 0.4rem 0; padding: 0.4rem; }
+        .list-i a{ color: #333; }
+        .table-item { background: #f5f6f7; height: 1.5rem; line-height: 1.5rem; }
+
+        .indata .add{
+            font-size: 0.25rem;
+        }
+        .danger{
+            color: rgb(232, 49, 50);
+        }
+        .warning{
+            color: rgb(236, 146, 23);
+        }
+        .info{
+            color: rgb(77, 80, 84);
+        }
+        .success{
+            color: #4E9635;
+        }
+        .inbody-o {
+            height: 11.6rem;
+            overflow: hidden;
+        }
+        .inbody li,
+        .inbody-o li{
+            border-radius: 0.2rem;  
+            overflow: hidden;
+            margin-bottom: 0.2rem;
+            /* padding: 0 0.2rem; */
+            text-align: center;
+            position: relative;
+            /* background: #f5f6f7; */
+        }
+
+        .inbody li .btn,
+        .inbody-o li .btn{
+            position: absolute;
+            right: 0.1rem;
+            top: 0.45rem;
+            width: 0.6rem;
+            height: 0.6rem;
+            /* transform: rotate(180deg); */
+        }
+        .case-item{
+            padding: 0 0.2rem;
+            display: flex;
+            background: #f5f6f7;
+
+        }
+        .case-item div{
+            flex:1
+        }
+        .column{
+            display: flex;border-bottom: 1px solid #f5f6f7;
+        }
+        .column div{flex:1}
+        .sublist{font-size: 0.4rem;line-height: 1rem;display: none;}
+        .handle_list{
+            text-align: center;
+            font-size: 0.5rem;
+            color: #666666;
+            margin: 0.4rem 0 0;
+        }
+</style>
+</head>
+
+<body>
+    <div class="main">
+        <p class="tit"></p>
+        
+        <p class="in-t">国内疫情</p>
+        <p class="updata-time"></p>
+        <ul class="indata ovf summaryDataIn">
+        </ul>
+        
+        <div class="inlist">
+            <div class="inlist-t ovf">
+                <div>地区</div>
+                <div>新增</div>
+                <div>确诊</div>
+                <div>治愈</div>
+                <div>死亡</div>
+            </div>
+            <ul class="inbody"></ul>
+            <div class="handle_list">展开全部</div>
+        </div>
+        <p class="in-t">国外疫情</p>
+        <p class="updata-time"></p>
+
+        <ul class="indata ovf summaryDataOut">
+        </ul>
+        
+        <table class="inlist-o">
+            <div class="inlist-t ovf">
+                <div>地区</div>
+                <div>确诊</div>
+                <div>治愈</div>
+                <div>死亡</div>
+            </div>
+            <ul class="inbody-o"></ul>
+        </table>
+        <p class="in-t">热点消息</p>
+        <ul class="list hot"></ul>
+        <p class="in-t">辟谣消息</p>
+        <ul class="list py"></ul>
+         <p class="in-t">防疫知识</p>
+         <ul class="list know"></ul>
+    </div>
+    <div class="show">
+        <div class="box">
+            <table class="inlist-x">
+                <thead class="inlist-t ovf">
+                    <th>
+                        <div>地区</div>
+                    </th>
+                    <th>
+                        <div>确诊</div>
+                    </th>
+                    <th>
+                        <div>治愈</div>
+                    </th>
+                    <th>
+                        <div>死亡</div>
+                    </th>
+                </thead>
+                <tbody class="inbody-x"></tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+<script>
+    ;
+    (function (doc, win, $, undefined) {
+        function Situation(){
+            this.init()
+        }
+        Situation.prototype = {
+            init:function(){
+                this.getData()
+            },
+            data:{},
+            // 获取全部数据
+            getData: function(){
+                var _this = this
+                $.ajax({
+                    type: "get",
+                    url: "http://localhost:4545/get",
+                    dataType: "json",
+                    success: function (res) {
+                        let R = JSON.parse(res)
+                        // eval(res);
+                        var data = R.component[0];
+                        _this.data = data
+                        $('.tit').text(data.title);
+                        $('.updata-time').text('截止：' + data.mapLastUpdatedTime);
+
+                        var DataInTag = `
+                        <li>
+                            <p class="indata-t">现有确诊</p>
+                            <p class="in-n confirmed danger">${data.summaryDataIn.curConfirm}</p>
+                            <p class="add">昨日<span class="danger">${data.summaryDataIn.curConfirmRelative > 0 ? '+':''}${data.summaryDataIn.curConfirmRelative}</span></p>
+                        </li>
+                        
+                        <li>
+                            <p class="indata-t">现有疑似</p>
+                            <p class="in-n unconfirmed wraning">${data.summaryDataIn.unconfirmed}</p>
+                            <p class="add">昨日<span class="wraning">${data.summaryDataIn.unconfirmedRelative > 0 ? '+':''}${data.summaryDataIn.unconfirmedRelative}</span></p>
+                        </li>
+                        <li>
+                            <p class="indata-t">现有重症</p>
+                            <p class="in-n confirmed info">${data.summaryDataIn.icu}</p>
+                            <p class="add">昨日<span class="info">${data.summaryDataIn.icuRelative > 0 ? '+':''}${data.summaryDataIn.icuRelative}</span></p>
+                        </li>
+                        <li>
+                            <p class="indata-t">累计确诊</p>
+                            <p class="in-n confirmed danger">${data.summaryDataIn.confirmed}</p>
+                            <p class="add">昨日<span class="danger">${data.summaryDataIn.confirmedRelative > 0 ? '+':''}${data.summaryDataIn.confirmedRelative}</span></p>
+                        </li>
+                        <li>
+                            <p class="indata-t">累计治愈</p>
+                            <p class="in-n cured success" >${data.summaryDataIn.cured}</p>
+                            <p class="add">昨日<span class="success">${data.summaryDataIn.curedRelative > 0 ? '+':''}${data.summaryDataIn.curedRelative}</span></p>
+                        </li>
+                        <li>
+                            <p class="indata-t">累计死亡</p>
+                            <p class="in-n died info">${data.summaryDataIn.died}</p>
+                            <p class="add">昨日<span class="info">${data.summaryDataIn.diedRelative > 0 ? '+':''}${data.summaryDataIn.diedRelative}</span></p>
+                        </li>`;
+                        $('.summaryDataIn').append(DataInTag);
+
+                        var DataOutTag = `
+                        <li>
+                            <p class="indata-t">现有确诊</p>
+                            <p class="in-n confirmed danger">${data.summaryDataOut.confirmed}</p> </li>
+                        <li>
+                            <p class="indata-t">累计治愈</p>
+                            <p class="in-n cured success" >${data.summaryDataOut.cured}</p> 
+                        </li>
+                        <li>
+                            <p class="indata-t">累计死亡</p>
+                            <p class="in-n died info">${data.summaryDataOut.died}</p>
+                        </li>`;
+
+                        $('.summaryDataOut').append(DataOutTag);
+                        // 国内地区疫情数据
+                        data.caseList.reverse().forEach((item,index) => {
+                            var cityTag =''
+                            // item.subList
+                            item.subList.forEach((c,i) => {
+                                cityTag +=  `<div class="column">
+                                            <div>${c.city}</div>
+                                            <div>${c.confirmedRelative ? c.confirmedRelative : '-'}</div>
+                                            <div>${c.confirmed ? c.confirmed : '-'}</div>
+                                            <div>${c.crued ? c.crued : '-'}</div>
+                                            <div>${c.died ? c.died : '-'}</div>
+                                        </div>`
+                            })
+                            var tag = `<li>
+                                <div class="case-item">
+                                    <div class='area'>${item.area}</div>
+                                    <div class='table-item'>${item.confirmedRelative}</div>
+                                    <div class='table-item'>${item.confirmed}</div>
+                                    <div class='table-item'>${item.crued}</div>
+                                    <div class='table-item'>${item.died}</div>
+                                </div>
+                                <div class="btn" data-id="${index}"><img src="images/arrow.png"></div>
+                                <div class="sublist">${cityTag}</div>
+                            </li>`;
+                            $('.inbody').append(tag);
+                            
+                        });
+                        
+                        // 国外地区疫情数据
+                        data.caseOutsideList.reverse().forEach((item) => {
+                            var tag = `<li>
+                                <div class="case-item">
+                                    <div class='area'>${item.area}</div>
+                                    <div class='table-item'>${item.confirmed?item.confirmed:'-'}</div>
+                                    <div class='table-item'>${item.crued?item.crued:'-'}</div>
+                                    <div class='table-item'>${item.died?item.died:'-'}</div>
+                                </div>
+                            </li>`;
+                            $('.inbody-o').append(tag);
+                        });
+                        data.hotwords.forEach((item) => {
+                            var tag = `<li class='list-i'>
+                                <a href='${item.url}'>${item.query}</a>
+                            </li>`;
+                            $('.hot').append(tag);
+                        });
+                        data.gossips.forEach((item) => {
+                        var tag = `<li class='list-i'>
+                            <a href='${item.url}'>${item.query}</a>
+                        </li>`;
+                        $('.py').append(tag);
+                        });
+                        data.knowledges.forEach((item) => {
+                            var tag = `<li class='list-i'>
+                                <a href='${item.url}'>${item.query}</a>
+                            </li>`;
+                            $('.know').append(tag);
+                            });
+                            
+                        $('.btn').on('click',function(){
+                            var id = $(this).data('id')
+                            _this.showSubList(id)
+                        })
+                       
+                    }
+                        
+                })
+            
+            },
+            // 展开收起地区详细数据
+            showSubList:function(i){
+                if(!this.data.caseList[i].isShow){
+                    this.data.caseList[i].isShow = true;
+                    $('.inbody li').eq(i).find('.sublist').show()
+                    $('.inbody li').eq(i).find('.btn').css({"transform":"rotate(180deg)"})
+                }else{
+                    this.data.caseList[i].isShow =false;
+                    $('.inbody li').eq(i).find('.sublist').hide()
+                    $('.inbody li').eq(i).find('.btn').css({"transform":"rotate(0deg)",})
+                }
+            }
+        }
+        new Situation()
+    })(document, window, jQuery)
+</script>
+
+</html>
